@@ -19,23 +19,22 @@ Controllers are kept extremely thin—they only handle HTTP transport logic and 
 src/
 ├── accounts/
 │   ├── dto/
-│   ├── interfaces/
 │   ├── models/
 │   ├── accounts.controller.ts
 │   ├── accounts.module.ts
 │   └── accounts.service.ts
 ├── billing/
 │   ├── dto/
-│   ├── interfaces/
 │   ├── models/
 │   ├── billing.controller.ts
 │   ├── billing.module.ts
 │   └── billing.service.ts
 ├── common/
+│   ├── guards/
+│   ├── interceptors/
 │   └── validators/
 ├── currencies/
 │   ├── dto/
-│   ├── interfaces/
 │   ├── models/
 │   ├── currencies.controller.ts
 │   ├── currencies.module.ts
@@ -93,10 +92,16 @@ npm run start:prod
 
 ## Testing
 
+The application includes both comprehensive Unit tests and End-to-End (E2E) tests.
+
 ```bash
-# unit tests
+# Run unit tests (Services & Logic)
 npm run test
+
+# Run e2e tests (Controllers, Validation & Network Layer)
+npm run test:e2e
 ```
+*Note: When running E2E tests, you will see `[ERR]` console logs. This is expected behavior, as the tests intentionally trigger `400`, `404`, and `409` exceptions to verify that the `LoggingInterceptor` securely catches and logs bad requests.*
 
 ## Running with Docker (Optional)
 
@@ -106,7 +111,7 @@ If you'd like to spin up the entire application smoothly inside a container with
 # Important: ensure .env exists first
 cp .env.example .env
 
-# Build and run detached
+# Re-build and run detached to inject the .env variables
 docker-compose up -d --build
 
 # View application logs
@@ -138,6 +143,15 @@ With the application running locally, you can access the Swagger UI documentatio
 1. **Persistence Integration**: Integrate `TypeORM` or `Prisma` to connect the repository layer directly to a PostgreSQL database.
 2. **Monetary Precision**: Introduce a library like `dinero.js` or `currency.js` to handle floats accurately to avoid standard floating-point precision issues with deep arithmetic scaling over time.
 3. **Automated End-to-End Testing**: Expand testing to full supertest HTTP E2E checks to guarantee controller validation matches actual JSON network payloads seamlessly.
+
+## API Testing with Postman
+
+We provide a Postman collection to simplify testing the business rules sequentially.
+
+1. Download [postman_collection.json](./postman_collection.json).
+2. Import it into Postman (`File → Import`).
+3. The collection is already pre-configured to hit `http://localhost:3000` and automatically passes the required `x-api-key: secret-billing-api-key` header for every request.
+4. Run the requests sequentially from top to bottom (Create Currency -> Create Account -> Calculate Bill) to observe the system working correctly.
 
 ---
 
