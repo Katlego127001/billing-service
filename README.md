@@ -12,6 +12,30 @@ The application is structured into domain-specific modules, promoting **Separati
 - **Billing**: Isolates complex logic for transaction fee calculations and promotional discounts.
 - **Repositories**: In-memory data store abstractions representing persistence without coupling business logic to actual database drivers.
 
+
+### System Flow Diagram
+```mermaid
+flowchart LR
+  Client([Client / Postman]) --> Interceptor[Logging Interceptor]
+  Interceptor --> Guard{ApiKey Guard}
+  
+  Guard -- Valid --> CC[Currencies Controller]
+  Guard -- Valid --> AC[Accounts Controller]
+  Guard -- Valid --> BC[Billing Controller]
+
+  CC --> CS[Currencies Service]
+  AC --> AS[Accounts Service]
+  BC --> BS[Billing Service]
+
+  AS -. Validates Currency .-> CS
+  BS -. Fetches Account .-> AS
+  BS -. Fetches Currency .-> CS
+
+  CS --> CR[(Currencies Repo)]
+  AS --> AR[(Accounts Repo)]
+```
+
+
 Controllers are kept extremely thin—they only handle HTTP transport logic and validation, delegating entirely to domain services. Global interceptors and pipes cleanly validate user payloads.
 
 ## Folder Structure
