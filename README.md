@@ -90,12 +90,17 @@ src/
 
 ## Installation
 
-1. Install all dependencies:
+1. Clone the repository and navigate into the project folder:
+```bash
+git clone <this-repo> && cd billing-service
+```
+
+2. Install all dependencies:
 ```bash
 npm install
 ```
 
-2. **Crucial setup**: Duplicate the example environment variables file so the application can retrieve the expected configuration:
+3. **Crucial setup**: Duplicate the example environment variables file so the application can retrieve the expected configuration:
 ```bash
 cp .env.example .env
 ```
